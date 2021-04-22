@@ -14,7 +14,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+
 #include "listes_dynamiques.h"
+
+bool isPair(size_t position, const Info *info){
+    if(*info % 2 == 0){
+        return true;
+    }
+    return false;
+}
 
 int main(void) {
     int info = 1;
@@ -24,7 +32,7 @@ int main(void) {
     int info5 = 5;
     int info6 = 6;
     Liste* maList = initialiser();
-
+    Liste* maList1 = initialiser();
 
     insererEnQueue(maList,&info);
     insererEnQueue(maList,&info2);
@@ -32,9 +40,26 @@ int main(void) {
     insererEnQueue(maList,&info4);
     insererEnQueue(maList,&info5);
     insererEnQueue(maList,&info6);
-    afficher(maList,FORWARD);
+
+    insererEnQueue(maList1,&info);
+    insererEnQueue(maList1,&info2);
+    insererEnQueue(maList1,&info3);
+    insererEnQueue(maList1,&info4);
+    insererEnQueue(maList1,&info5);
+
+
+
+    afficher(maList1,FORWARD);
     printf("\n");
-    vider(maList,3);
+
+    afficher(maList,FORWARD);
+
+    printf("\n%d", sontEgales(maList1, maList));
+
+    supprimerSelonCritere(maList, &isPair);
+
     afficher(maList,FORWARD);
     return EXIT_SUCCESS;
 }
+
+
