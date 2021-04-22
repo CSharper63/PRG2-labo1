@@ -17,13 +17,24 @@
 #include "listes_dynamiques.h"
 
 int main(void) {
-    int info = 2;
+    int info = 1;
+    int info2 = 2;
+    int info3 = 3;
+    int info4 = 4;
+    int info5 = 5;
+    int info6 = 6;
     Liste* maList = initialiser();
-    printf("%zu\n", longueur(maList));
-    printf("%d\n", estVide(maList));
-    insererEnQueue(maList, &info);
-    printf("%zu\n", longueur(maList));
-    afficher(maList, FORWARD);
 
+
+    insererEnQueue(maList,&info);
+    insererEnQueue(maList,&info2);
+    insererEnQueue(maList,&info3);
+    insererEnQueue(maList,&info4);
+    insererEnQueue(maList,&info5);
+    insererEnQueue(maList,&info6);
+    afficher(maList,FORWARD);
+    printf("\n");
+    vider(maList,3);
+    afficher(maList,FORWARD);
     return EXIT_SUCCESS;
 }
