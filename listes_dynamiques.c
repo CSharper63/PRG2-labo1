@@ -102,6 +102,7 @@ Status insererEnTete(Liste *liste, const Info *info) {
             liste->tete->info = *info;
             liste->tete->suivant = liste->tete;
             liste->tete->precedent = NULL;
+            liste->queue = liste->tete;
             return OK;
         } else {
             return MEMOIRE_INSUFFISANTE;
@@ -117,7 +118,6 @@ Status insererEnTete(Liste *liste, const Info *info) {
 Status insererEnQueue(Liste *liste, const Info *info) {
     //TODO: créer variable pour cleanup,
     //TODO creer un pointeur en fonction du statut de la liste (vide ou non) et l'utiliser partout dans la fonction
-
     if (!estVide(liste)) {
         liste->queue->suivant = malloc(sizeof(Element));
         if (liste->queue->suivant != NULL) {
@@ -135,6 +135,7 @@ Status insererEnQueue(Liste *liste, const Info *info) {
             liste->queue->info = *info;
             liste->queue->suivant = NULL;
             liste->queue->precedent = liste->tete;
+            liste->tete = liste->queue;
             return OK;
         }
     }
