@@ -57,7 +57,7 @@ size_t longueur(const Liste *liste) {
 // En mode FORWARD, resp. BACKWARD, l'affichage se fait en parcourant liste
 // dans le sens tete -> queue, resp. queue -> tete.
 void afficher(const Liste *liste, Mode mode) {
-    printf("[");
+    printf("["); //TODO utiliser une chaine de caractères
     if (!estVide(liste)) {
         switch (mode) {
             case FORWARD:
@@ -93,9 +93,7 @@ Status insererEnTete(Liste *liste, const Info *info) {
             liste->tete->precedent->precedent = NULL;
             liste->tete = liste->tete->precedent;
             return OK;
-        } else {
-            return MEMOIRE_INSUFFISANTE;
-        }
+        } else { return MEMOIRE_INSUFFISANTE; }
     } else {
         liste->tete = malloc(sizeof(Element));
         if (liste->tete != NULL) {
@@ -104,9 +102,7 @@ Status insererEnTete(Liste *liste, const Info *info) {
             liste->tete->precedent = NULL;
             liste->queue = liste->tete;
             return OK;
-        } else {
-            return MEMOIRE_INSUFFISANTE;
-        }
+        } else { return MEMOIRE_INSUFFISANTE; }
     }
 }
 // ------------------------------------------------------------------------------
@@ -126,9 +122,7 @@ Status insererEnQueue(Liste *liste, const Info *info) {
             liste->queue->suivant->precedent = liste->tete;
             liste->queue = liste->queue->suivant;
             return OK;
-        } else {
-            return MEMOIRE_INSUFFISANTE;
-        }
+        } else { return MEMOIRE_INSUFFISANTE; }
     } else {
         liste->queue = malloc(sizeof(Element));
         if (liste->queue != NULL) {
@@ -137,7 +131,7 @@ Status insererEnQueue(Liste *liste, const Info *info) {
             liste->queue->precedent = liste->tete;
             liste->tete = liste->queue;
             return OK;
-        }
+        } else{ return MEMOIRE_INSUFFISANTE; }
     }
 }
 // ------------------------------------------------------------------------------
@@ -147,7 +141,21 @@ Status insererEnQueue(Liste *liste, const Info *info) {
 // puis supprime, en restituant la mémoire allouée, ledit élément.
 // Renvoie LISTE_VIDE si la liste passée en paramètre est vide, OK sinon.
 Status supprimerEnTete(Liste *liste, Info *info) {
+    if (!estVide(liste)){
+        *info = liste->tete->info;
+        if(liste->tete->suivant){
+            liste->tete = liste->tete->suivant;
+            free(liste->tete->precedent);
+            liste->tete->precedent = NULL;
 
+        } else{
+            free(liste->tete);
+            liste->tete = NULL;
+            liste->queue = NULL;
+        }
+
+        return OK;
+    } else { return LISTE_VIDE; }
 }
 // ------------------------------------------------------------------------------
 
@@ -156,7 +164,20 @@ Status supprimerEnTete(Liste *liste, Info *info) {
 // puis supprime, en restituant la mémoire allouée, ledit élément.
 // Renvoie LISTE_VIDE si la liste passée en paramètre est vide, OK sinon.
 Status supprimerEnQueue(Liste *liste, Info *info) {
-
+    if (!estVide(liste)){
+        *info = liste->queue->info;
+        if(liste->queue->precedent){
+            liste->queue = liste->queue->precedent;
+           // if(liste->queue->suivant)
+            free(liste->queue->suivant);
+            liste->queue->suivant = NULL;
+        } else{
+            free(liste->tete);
+            liste->tete = NULL;
+            liste->queue = NULL;
+        }
+        return OK;
+    } else { return LISTE_VIDE; }
 }
 // ------------------------------------------------------------------------------
 
@@ -175,7 +196,22 @@ void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const 
 // à partir de la position position
 // NB Vider à partir de la position 0 signifie vider toute la liste.
 void vider(Liste *liste, size_t position) {
+    //TODO: traîter le cas position = 0, position > nb elements, ...
+    if(estVide(liste)) return;
+    if(position > longueur(liste)) return;
 
+    Element *currentPtr = liste->tete;
+    size_t taille = longueur(liste) - 1;
+
+    for (unsigned i = 0; currentPtr != NULL ; ++i, currentPtr = currentPtr->suivant) {
+        if (i == (position - 1)) {
+            liste->queue = currentPtr;
+        }
+        if(i > position && i != taille){
+            free(currentPtr->precedent);
+            currentPtr->precedent = NULL;
+        }
+    }
 }
 // ------------------------------------------------------------------------------
 
