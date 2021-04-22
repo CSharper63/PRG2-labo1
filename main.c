@@ -12,8 +12,18 @@
  -----------------------------------------------------------------------------------
 */
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include "listes_dynamiques.h"
 
 int main(void) {
+    int info = 2;
+    Liste* maList = initialiser();
+    printf("%zu\n", longueur(maList));
+    printf("%d\n", estVide(maList));
+    insererEnQueue(maList, &info);
+    printf("%zu\n", longueur(maList));
+    afficher(maList, FORWARD);
 
     return EXIT_SUCCESS;
 }
