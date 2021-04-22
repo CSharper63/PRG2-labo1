@@ -17,15 +17,13 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
-#include <string.h>
 
 // ------------------------------------------------------------------------------
 // Initialisation de la liste.
 // NB Cette fonction doit obligatoirement être utilisée pour se créer une liste
 // car elle garantit la mise à NULL des champs tete et queue de la liste
 Liste *initialiser() {
-    // setter ptr queue et tete a NULL
-    Liste *liste = malloc(sizeof(Liste)); //TODO check si on doit faire un malloc
+    Liste *liste = malloc(sizeof(Liste));
     assert(liste != NULL);
 
     liste->tete = NULL;
@@ -193,22 +191,25 @@ void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const 
     if (estVide(liste)) return;
     //TODO pas fonctionnel sigtrap error
     size_t pos = 0;
-    for (Element *currentPtr = liste->tete; currentPtr != NULL; currentPtr = currentPtr->suivant, ++pos){
-        if(critere(pos, &currentPtr->info)){
-            Element* tmp = currentPtr;
-            if(currentPtr->precedent != NULL){
-                currentPtr->precedent->suivant = currentPtr->suivant;
-            }else{
-                liste->tete = currentPtr->suivant;
+    int info; //Variable utilisée pour l'appel de supprimeEnTete et supprimeEnQueue
+    Element *pastPtr;
+    for (Element *currentPtr = liste->tete; currentPtr != NULL; ++pos) {
+        if (critere(pos, &currentPtr->info)) {
+            if (currentPtr == liste->tete) { //Cas ou current = tete
+                supprimerEnTete(liste, &info);
+                currentPtr = liste->tete;
+            } else if (currentPtr == liste->queue) { //Cas ou current = queue
+                supprimerEnQueue(liste, &info);
+                currentPtr = NULL;
+            } else { //Cas du milieu
+                pastPtr->suivant = currentPtr->suivant;
+                free(currentPtr);
+                currentPtr = pastPtr->suivant;
+                currentPtr->precedent = pastPtr;
             }
-            if(currentPtr->suivant != NULL){
-                currentPtr->suivant->precedent = currentPtr->precedent;
-            } else{
-                liste->queue = currentPtr->precedent;
-            }
-
-            free(tmp);
-            tmp = NULL;
+        } else {
+            pastPtr = currentPtr;
+            currentPtr = currentPtr->suivant;
         }
     }
 }
