@@ -59,6 +59,7 @@ int main(void) {
     supprimerSelonCritere(maList, &isPair);
 
     afficher(maList,FORWARD);
+    afficher(maList,BACKWARD);
     return EXIT_SUCCESS;
 }
 
