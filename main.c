@@ -50,7 +50,7 @@ int main(void) {
     // Test suppression d'éléments dans une liste vide
     int valSuppr;
     printf(" \nTest suppression element en queue dans une liste vide\n");
-    if(supprimerEnQueue(maList, valSuppr) == LISTE_VIDE){
+    if(supprimerEnQueue(maList, &valSuppr) == LISTE_VIDE){
         printf("Renvoi \"LISTE_VIDE\" OK ! \n");
     }
     else{
@@ -58,7 +58,7 @@ int main(void) {
     }
 
     printf(" \nTest suppression element en tete dans une liste vide\n");
-    if(supprimerEnTete(maList, valSuppr) == LISTE_VIDE){
+    if(supprimerEnTete(maList, &valSuppr) == LISTE_VIDE){
         printf("Renvoi \"LISTE_VIDE\" OK ! \n");
     }
     else{
