@@ -140,12 +140,7 @@ Status insererEnQueue(Liste *liste, const Info *info) {
 	}
 	return OK;
 }
-// ------------------------------------------------------------------------------
 
-// ------------------------------------------------------------------------------
-// Renvoie, via le paramètre info, l'info stockée dans l'élément en tête de liste,
-// puis supprime, en restituant la mémoire allouée, ledit élément.
-// Renvoie LISTE_VIDE si la liste passée en paramètre est vide, OK sinon.
 /**
  * Supprime le premier élément de la liste.
  * @param liste pointeur sur la liste.
@@ -206,7 +201,8 @@ Status supprimerEnQueue(Liste *liste, Info *info) {
 void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const Info *info)) {
 	if (estVide(liste)) return;
 	size_t pos = 0;
-	int info; //Variable utilisée pour l'appel de supprimeEnTete et supprimeEnQueue
+	//Variable utilisée pour l'appel de supprimerEnTete et supprimeEnQueue
+	int info;
 	Element *pastPtr;
 	for (Element *currentPtr = liste->tete; currentPtr != NULL; ++pos) {
 		if (critere(pos, &currentPtr->info)) {
@@ -237,21 +233,28 @@ void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const 
 void vider(Liste *liste, size_t position) {
 	size_t taille = longueur(liste);
 
-	if (estVide(liste) || position > taille) return; //si la liste est vide ou que la position n'est pas dans le range.
+	if (estVide(liste) || position >= taille) return;
 
-	Element *currentPtr = liste->queue->precedent;
-	if (taille == 1) { //dans le cas où la position entrée est 0 mais qu'il n'y a qu'un élément dans la liste.
+	if (taille == 1) {
 		free(liste->tete);
 		liste->tete = NULL;
 		liste->queue = NULL;
 	} else {
-		/* Parcours la boucle depuis la fin en supprimant les éléments jusqu'à l'index position et réaffecte
-		 * le pointeur sur la queue de liste.
+			Element *currentPtr = liste->queue->precedent;
+		/* Parcours la boucle depuis la fin en supprimant les éléments jusqu'à
+		 * l'index position et réaffecte le pointeur sur la queue de liste.
 		 * */
-		for (size_t i = taille - 1; i >= position; --i, currentPtr = currentPtr->precedent) {
+			for (size_t i = taille - 1; i >= position && i != 0; --i, currentPtr = currentPtr->precedent) {
 			free(currentPtr->suivant);
 			currentPtr->suivant = NULL;
 			liste->queue = currentPtr;
+		}
+
+		if(!position){
+			free(currentPtr);
+			currentPtr = NULL;
+			liste->queue = NULL;
+			liste->tete = NULL;
 		}
 	}
 }
@@ -263,25 +266,12 @@ void vider(Liste *liste, size_t position) {
  * @return un true si égales ou false si pas égales.
  */
 bool sontEgales(const Liste *liste1, const Liste *liste2) {
-	// TODO bonne idee de tester les longueur?
-	// ca veut dire qu'il faut parcourir toutes les listes en entieres
-	// ce serait efficace que si on avait un champ qui contient la longueur
-	// de la liste.
-	if (longueur(liste1) != longueur(liste2)) return false;
 
-	/*
-	for (Element *currentPtr1 = liste1->tete, *currentPtr2 = liste2->tete; currentPtr1 != NULL && currentPtr2 != NULL; currentPtr1 = currentPtr1->suivant, currentPtr2 = currentPtr2->suivant) {
-		 if (currentPtr1->info != currentPtr2->info) return false;
-	}
-	return true;
-	 */
-
-	// TODO autre facon de faire, plus lisible que tout imbriquer dans for ?
 	Element* currentPtrL1 = liste1->tete;
 	Element* currentPtrL2 = liste2->tete;
 
 	while(currentPtrL1 && currentPtrL2){
-		if(currentPtrL1->info != currentPtrL2->info) return false;
+		if(currentPtrL1->info != currentPtrL2->info) { return false; }
 		currentPtrL1 = currentPtrL1->suivant;
 		currentPtrL2 = currentPtrL2->suivant;
 	}
