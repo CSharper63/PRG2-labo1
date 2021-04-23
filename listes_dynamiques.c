@@ -73,6 +73,7 @@ void afficher(const Liste *liste, Mode mode) {
                 printf("Veuillez selectionner un mode"); //@TODO: Vérifier si nécessaire
                 break;
         }
+
     }
     printf("]");
 }
@@ -83,6 +84,29 @@ void afficher(const Liste *liste, Mode mode) {
 // Renvoie OK si l'insertion s'est déroulée avec succès et MEMOIRE_INSUFFISANTE
 // s'il n'y a pas assez de mémoire pour créer le nouvel élément.
 Status insererEnTete(Liste *liste, const Info *info) {
+    // TODO Mehdi -> done
+    assert(info != NULL);
+
+    Element* nouveau = malloc(sizeof(Element));
+    if(nouveau != NULL){
+        nouveau->info = *info;
+        if (!estVide(liste)) {
+            nouveau->suivant = liste->tete;
+            nouveau->precedent = NULL;
+            liste->tete = nouveau;
+        } else {
+            nouveau->suivant = NULL;
+            nouveau->precedent = NULL;
+            liste->queue = nouveau;
+            liste->tete = nouveau;
+        }
+    }else {
+        return MEMOIRE_INSUFFISANTE;
+    }
+    return OK;
+
+    // ANCIENNE VERSION
+    /*
     //@TODO: créer variable pour cleanup
     assert(info != NULL);
     if (!estVide(liste)) {
@@ -104,6 +128,7 @@ Status insererEnTete(Liste *liste, const Info *info) {
             return OK;
         } else { return MEMOIRE_INSUFFISANTE; }
     }
+     */
 }
 // ------------------------------------------------------------------------------
 
@@ -111,7 +136,30 @@ Status insererEnTete(Liste *liste, const Info *info) {
 // Insère un nouvel élément (contenant info) en queue de liste.
 // Renvoie OK si l'insertion s'est déroulée avec succès et MEMOIRE_INSUFFISANTE
 // s'il n'y a pas assez de mémoire pour créer le nouvel élément.
+#include <stdio.h>
 Status insererEnQueue(Liste *liste, const Info *info) {
+    assert(info != NULL);
+    Element* nouveau = malloc(sizeof(Element));
+    if(nouveau != NULL){
+        nouveau->info = *info;
+
+        if (!estVide(liste)) {
+            nouveau->suivant = NULL;
+            nouveau->precedent = liste->queue;
+            liste->queue->suivant = nouveau;
+            liste->queue = nouveau;
+        } else {
+            nouveau->suivant = NULL;
+            nouveau->precedent = NULL;
+            liste->queue = nouveau;
+            liste->tete = nouveau;
+        }
+    }else {
+        return MEMOIRE_INSUFFISANTE;
+    }
+    return OK;
+
+        /*
     assert(info != NULL);
     //TODO: créer variable pour cleanup,
     //TODO creer un pointeur en fonction du statut de la liste (vide ou non) et l'utiliser partout dans la fonction
@@ -134,6 +182,7 @@ Status insererEnQueue(Liste *liste, const Info *info) {
             return OK;
         } else { return MEMOIRE_INSUFFISANTE; }
     }
+    */
 }
 // ------------------------------------------------------------------------------
 

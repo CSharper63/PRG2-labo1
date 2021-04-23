@@ -34,12 +34,46 @@ int main(void) {
     Liste* maList = initialiser();
     Liste* maList1 = initialiser();
 
-    insererEnQueue(maList,&info);
-    insererEnQueue(maList,&info2);
-    insererEnQueue(maList,&info3);
-    insererEnQueue(maList,&info4);
-    insererEnQueue(maList,&info5);
+    printf("Teste liste\n");
+    printf("Affichage liste apres init\n");
+    afficher(maList,FORWARD);
+
+    insererEnTete(maList, &info4);
+    printf("\nAffichage apres ajout 4\n");
+    afficher(maList,FORWARD);
+
+    printf("\nAffichage apres ajout 3 en tete\n");
+    insererEnTete(maList, &info3);
+    afficher(maList,FORWARD);
+
+    printf("\nAffichage apres ajout 5 en queue\n");
+    insererEnQueue(maList, &info5);
+    afficher(maList,FORWARD);
+
+    printf("\nInsertion en queue de 6 \n");
     insererEnQueue(maList,&info6);
+    afficher(maList,FORWARD);
+
+    printf("\nInsertion en tete de 2 \n");
+    insererEnTete(maList,&info2);
+    afficher(maList,FORWARD);
+
+    printf("\nInsertion en tete de 1\n");
+    insererEnTete(maList,&info);
+    afficher(maList,FORWARD);
+
+    printf("\n");
+    printf("\n");
+
+    insererEnQueue(maList,&info);
+    afficher(maList,FORWARD);
+
+
+
+    printf("\nInsertion en tete de 2 puis 1\n");
+    insererEnTete(maList, &info2);
+    insererEnTete(maList, &info);
+    afficher(maList,FORWARD);
 
     insererEnQueue(maList1,&info);
     insererEnQueue(maList1,&info2);
