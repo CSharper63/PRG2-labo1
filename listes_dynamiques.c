@@ -204,7 +204,9 @@ Status supprimerEnTete(Liste *liste, Info *info) {
             liste->queue = NULL;
         }
         return OK;
-    } else { return LISTE_VIDE; }
+    } else {
+        return LISTE_VIDE;
+    }
 }
 // ------------------------------------------------------------------------------
 
@@ -218,7 +220,6 @@ Status supprimerEnQueue(Liste *liste, Info *info) {
         *info = liste->queue->info;
         if (liste->queue->precedent) {
             liste->queue = liste->queue->precedent;
-            // if(liste->queue->suivant)
             free(liste->queue->suivant);
             liste->queue->suivant = NULL;
         } else {
@@ -227,7 +228,9 @@ Status supprimerEnQueue(Liste *liste, Info *info) {
             liste->queue = NULL;
         }
         return OK;
-    } else { return LISTE_VIDE; }
+    } else {
+        return LISTE_VIDE;
+    }
 }
 // ------------------------------------------------------------------------------
 
@@ -238,7 +241,6 @@ Status supprimerEnQueue(Liste *liste, Info *info) {
 // impaire et pour lesquels info est compris dans un certain intervalle de valeurs
 void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const Info *info)) {
     if (estVide(liste)) return;
-    //TODO pas fonctionnel sigtrap error
     size_t pos = 0;
     int info; //Variable utilisée pour l'appel de supprimeEnTete et supprimeEnQueue
     Element *pastPtr;
@@ -298,9 +300,24 @@ void vider(Liste *liste, size_t position) {
 bool sontEgales(const Liste *liste1, const Liste *liste2) {
     if (longueur(liste1) != longueur(liste2)) return false;
 
+    /*
     for (Element *currentPtr1 = liste1->tete, *currentPtr2 = liste2->tete; currentPtr1 != NULL && currentPtr2 != NULL; currentPtr1 = currentPtr1->suivant, currentPtr2 = currentPtr2->suivant) {
         if (currentPtr1->info != currentPtr2->info) return false;
     }
     return true;
+     */
+
+    // TODO autre facon de faire, plus lisible que tout imbriquer dans for ?
+    Element* currentPtrL1 = liste1->tete;
+    Element* currentPtrL2 = liste2->tete;
+
+    while(currentPtrL1 && currentPtrL2){
+        if(currentPtrL1->info != currentPtrL2->info) return false;
+        currentPtrL1 = currentPtrL1->suivant;
+        currentPtrL2 = currentPtrL2->suivant;
+    }
+
+    return !currentPtrL1 && !currentPtrL2;
+
 }
 // ------------------------------------------------------------------------------
