@@ -67,16 +67,28 @@ int main(void) {
 
     // -------------------------------------------------------------------------
     // Test d'insertion d'éléments dans une liste
-    insererEnTete(maList, &info4);
-    printf("\nAffichage apres ajout 4 en tete\n");
+    printf("\nAffichage apres ajout 4 en tete et test si retour OK\n");
+
+	if(insererEnTete(maList, &info4) == OK){
+		printf("Retour OK\n");
+	}
+
     afficher(maList,FORWARD);
 
     printf("\nAffichage apres supression 4 en queue\n");
-    supprimerEnQueue(maList, &valSuppr);
+	if(supprimerEnQueue(maList, &valSuppr) == OK){
+		printf("Retour OK\n");
+	}
+
     afficher(maList,FORWARD);
 
-    insererEnQueue(maList, &info4);
+	 // A été testé en mettant à la main le retour de malloc à NULL
+    /*if(insererEnQueue(maList, &info4) == MEMOIRE_INSUFFISANTE) {
+    	printf("MEM INSUF OK");
+    }*/
+
     printf("\nAffichage apres ajout 4 en queue\n");
+	insererEnQueue(maList, &info4);
     afficher(maList,FORWARD);
 
     printf("\nAffichage apres supression 4 en tete\n");
@@ -151,6 +163,35 @@ int main(void) {
     supprimerSelonCritere(maList, &isImpair);
     printf("\nApres suppression des elements impaires:\n");
     afficher(maList,FORWARD);
+
+    //----
+	// Test de vider une liste
+	printf("\nTest vider liste a partir de 3:\n");
+	insererEnQueue(maList2, &info);
+	insererEnQueue(maList2, &info2);
+	insererEnQueue(maList2, &info3);
+	insererEnQueue(maList2, &info4);//la
+	insererEnQueue(maList2, &info5);
+	insererEnQueue(maList2, &info6);
+	vider(maList2, 3);
+	afficher(maList2,FORWARD);
+	afficher(maList2,BACKWARD);
+	printf("\nTest vider liste a partir de 10 (pos >= taille):\n");
+	vider(maList2, 10);
+	afficher(maList2,FORWARD);
+	afficher(maList2,BACKWARD);
+	printf("\nTest vider liste a partir de 3(taille =4):\n");
+	vider(maList2, 3);
+	afficher(maList2,FORWARD);
+	afficher(maList2,BACKWARD);
+	printf("\nTest vidage total:\n");
+	vider(maList2, 0);
+	afficher(maList2,FORWARD);
+	afficher(maList2,BACKWARD);
+	printf("\nTest vidage total sur liste vide:\n");
+	vider(maList2, 0);
+	afficher(maList2,FORWARD);
+	afficher(maList2,BACKWARD);
     return EXIT_SUCCESS;
 }
 
