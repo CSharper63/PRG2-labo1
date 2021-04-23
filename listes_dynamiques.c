@@ -298,6 +298,10 @@ void vider(Liste *liste, size_t position) {
 // apparaissant dans le même ordre), false sinon.
 // NB 2 listes vides sont considérées comme égales.
 bool sontEgales(const Liste *liste1, const Liste *liste2) {
+    // TODO bonne idee de tester les longueur?
+    // ca veut dire qu'il faut parcourir toutes les listes en entieres
+    // ce serait efficace que si on avait un champ qui contient la longueur
+    // de la liste
     if (longueur(liste1) != longueur(liste2)) return false;
 
     /*
