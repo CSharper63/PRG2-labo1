@@ -192,23 +192,6 @@ int main(void) {
 	afficher(maList2,FORWARD);
 	afficher(maList2,BACKWARD);
 
-	Element* ptr = maList->tete;
-	while(ptr){
-	    Element* suivant = ptr->suivant;
-	    free(ptr);
-	    ptr = suivant;
-	}
-
-    ptr = maList2->tete;
-    while(ptr){
-        Element* suivant = ptr->suivant;
-        free(ptr);
-        ptr = suivant;
-    }
-
-    vider(maList, 3);
-    vider(maList, 0);
-
 	free(maList);
 	free(maList2);
 
