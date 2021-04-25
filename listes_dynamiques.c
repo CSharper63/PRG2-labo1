@@ -62,19 +62,18 @@ void afficher(const Liste *liste, Mode mode) {
 	printf("[");
 	if (!estVide(liste)) {
 		switch (mode) {
+            case FORWARD:
+                for (Element *currentPtr = liste->tete; currentPtr != NULL; currentPtr = currentPtr->suivant) {
+                    printf("%d", currentPtr->info);
+                    if(currentPtr->suivant)
+                        printf(",");
+                }
+                break;
 			case BACKWARD:
 				for (Element *currentPtr = liste->queue; currentPtr != NULL; currentPtr = currentPtr->precedent) {
 					printf("%d", currentPtr->info);
-					if(currentPtr->precedent) { printf(","); }
-				}
-				break;
-
-			default: //Les cas par defaut passent dans le forward
-
-			case FORWARD:
-				for (Element *currentPtr = liste->tete; currentPtr != NULL; currentPtr = currentPtr->suivant) {
-					printf("%d", currentPtr->info);
-					if(currentPtr->suivant) { printf(","); }
+					if(currentPtr->precedent)
+					    printf(",");
 				}
 				break;
 		}
@@ -93,20 +92,20 @@ Status insererEnTete(Liste *liste, const Info *info) {
 	assert(info != NULL);
 
 	Element* nouveau = malloc(sizeof(Element));
-	if(nouveau != NULL){
-		nouveau->info = *info;
-		if (!estVide(liste)) {
-			nouveau->suivant = liste->tete;
-			nouveau->precedent = NULL;
-			liste->tete = nouveau;
-		} else {
-			nouveau->suivant = NULL;
-			nouveau->precedent = NULL;
-			liste->queue = nouveau;
-			liste->tete = nouveau;
-		}
-	}else {
-		return MEMOIRE_INSUFFISANTE;
+	if(nouveau == NULL){
+        return MEMOIRE_INSUFFISANTE;
+	} else {
+        nouveau->info = *info;
+        if (!estVide(liste)) {
+            nouveau->suivant = liste->tete;
+            nouveau->precedent = NULL;
+            liste->tete = nouveau;
+        } else {
+            nouveau->suivant = NULL;
+            nouveau->precedent = NULL;
+            liste->queue = nouveau;
+            liste->tete = nouveau;
+        }
 	}
 	return OK;
 }
@@ -121,22 +120,22 @@ Status insererEnTete(Liste *liste, const Info *info) {
 Status insererEnQueue(Liste *liste, const Info *info) {
 	assert(info != NULL);
 	Element* nouveau = malloc(sizeof(Element));
-	if(nouveau != NULL){
-		nouveau->info = *info;
-
-		if (!estVide(liste)) {
-			nouveau->suivant = NULL;
-			nouveau->precedent = liste->queue;
-			liste->queue->suivant = nouveau;
-			liste->queue = nouveau;
-		} else {
-			nouveau->suivant = NULL;
-			nouveau->precedent = NULL;
-			liste->queue = nouveau;
-			liste->tete = nouveau;
-		}
+	if(nouveau == NULL){
+        return MEMOIRE_INSUFFISANTE;
 	}else {
-		return MEMOIRE_INSUFFISANTE;
+        nouveau->info = *info;
+
+        if (!estVide(liste)) {
+            nouveau->suivant = NULL;
+            nouveau->precedent = liste->queue;
+            liste->queue->suivant = nouveau;
+            liste->queue = nouveau;
+        } else {
+            nouveau->suivant = NULL;
+            nouveau->precedent = NULL;
+            liste->queue = nouveau;
+            liste->tete = nouveau;
+        }
 	}
 	return OK;
 }
@@ -150,20 +149,20 @@ Status insererEnQueue(Liste *liste, const Info *info) {
  */
 Status supprimerEnTete(Liste *liste, Info *info) {
 	assert(info != NULL);
-	if (!estVide(liste)) {
-		*info = liste->tete->info;
-		if (liste->tete->suivant) {
-			liste->tete = liste->tete->suivant;
-			free(liste->tete->precedent);
-			liste->tete->precedent = NULL;
-		} else {
-			free(liste->tete);
-			liste->tete = NULL;
-			liste->queue = NULL;
-		}
-		return OK;
+	if (estVide(liste)) {
+        return LISTE_VIDE;
 	} else {
-		return LISTE_VIDE;
+        *info = liste->tete->info;
+        if (liste->tete->suivant) {
+            liste->tete = liste->tete->suivant;
+            free(liste->tete->precedent);
+            liste->tete->precedent = NULL;
+        } else {
+            free(liste->tete);
+            liste->tete = NULL;
+            liste->queue = NULL;
+        }
+        return OK;
 	}
 }
 
@@ -176,20 +175,20 @@ Status supprimerEnTete(Liste *liste, Info *info) {
  */
 Status supprimerEnQueue(Liste *liste, Info *info) {
 	assert(info != NULL);
-	if (!estVide(liste)) {
-		*info = liste->queue->info;
-		if (liste->queue->precedent) {
-			liste->queue = liste->queue->precedent;
-			free(liste->queue->suivant);
-			liste->queue->suivant = NULL;
-		} else {
-			free(liste->tete);
-			liste->tete = NULL;
-			liste->queue = NULL;
-		}
-		return OK;
+	if (estVide(liste)) {
+        return LISTE_VIDE;
 	} else {
-		return LISTE_VIDE;
+        *info = liste->queue->info;
+        if (liste->queue->precedent) {
+            liste->queue = liste->queue->precedent;
+            free(liste->queue->suivant);
+            liste->queue->suivant = NULL;
+        } else {
+            free(liste->tete);
+            liste->tete = NULL;
+            liste->queue = NULL;
+        }
+        return OK;
 	}
 }
 
@@ -199,9 +198,11 @@ Status supprimerEnQueue(Liste *liste, Info *info) {
  * @param critere fonction prenant deux paramètres position et pointeur sur le contenu de d'un élément de la liste.
  */
 void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const Info *info)) {
-	if (estVide(liste)) return;
+	if (estVide(liste))
+	    return;
 	size_t pos = 0;
-	//Variable utilisée pour l'appel de supprimerEnTete et supprimeEnQueue
+	//Variable "info" utilisée pour l'appel de supprimerEnTete et
+	// supprimeEnQueue
 	int info;
 	Element *pastPtr;
 	for (Element *currentPtr = liste->tete; currentPtr != NULL; ++pos) {
@@ -233,7 +234,8 @@ void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const 
 void vider(Liste *liste, size_t position) {
 	size_t taille = longueur(liste);
 
-	if (estVide(liste) || position >= taille) return;
+	if (estVide(liste) || position >= taille)
+	    return;
 
 	if (taille == 1) {
 		free(liste->tete);
@@ -260,7 +262,7 @@ void vider(Liste *liste, size_t position) {
 }
 
 /**
- * Vérifie si les deux listes passées en paramètres sont égales.
+ * Vérifie si les deux listes passées en paramètres sont égaleschecklist.
  * @param liste1 pointeur sur la première liste.
  * @param liste2 pointeur sur la seconde liste.
  * @return un true si égales ou false si pas égales.
@@ -271,7 +273,8 @@ bool sontEgales(const Liste *liste1, const Liste *liste2) {
 	Element* currentPtrL2 = liste2->tete;
 
 	while(currentPtrL1 && currentPtrL2){
-		if(currentPtrL1->info != currentPtrL2->info) { return false; }
+		if(currentPtrL1->info != currentPtrL2->info)
+		    return false;
 		currentPtrL1 = currentPtrL1->suivant;
 		currentPtrL2 = currentPtrL2->suivant;
 	}
