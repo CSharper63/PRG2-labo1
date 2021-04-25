@@ -91,7 +91,7 @@ void afficher(const Liste *liste, Mode mode) {
 Status insererEnTete(Liste *liste, const Info *info) {
 	assert(info != NULL);
 
-	Element* nouveau = malloc(sizeof(Element));
+	Element* nouveau = (Element*) malloc(sizeof(Element));
 	if(nouveau == NULL){
         return MEMOIRE_INSUFFISANTE;
 	} else {
@@ -99,6 +99,7 @@ Status insererEnTete(Liste *liste, const Info *info) {
         if (!estVide(liste)) {
             nouveau->suivant = liste->tete;
             nouveau->precedent = NULL;
+            liste->tete->precedent = nouveau;
             liste->tete = nouveau;
         } else {
             nouveau->suivant = NULL;
@@ -118,8 +119,9 @@ Status insererEnTete(Liste *liste, const Info *info) {
  * s'il n'y a pas assez de mémoire pour créer le nouvel élément.
  */
 Status insererEnQueue(Liste *liste, const Info *info) {
+
 	assert(info != NULL);
-	Element* nouveau = malloc(sizeof(Element));
+	Element* nouveau = (Element*) malloc(sizeof(Element));
 	if(nouveau == NULL){
         return MEMOIRE_INSUFFISANTE;
 	}else {
@@ -233,7 +235,6 @@ void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const 
  */
 void vider(Liste *liste, size_t position) {
 	size_t taille = longueur(liste);
-
 	if (estVide(liste) || position >= taille)
 	    return;
 
@@ -253,10 +254,11 @@ void vider(Liste *liste, size_t position) {
 		}
 
 		if(!position){
-			free(currentPtr);
+		    free(liste->tete);
 			currentPtr = NULL;
 			liste->queue = NULL;
 			liste->tete = NULL;
+
 		}
 	}
 }

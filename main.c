@@ -122,18 +122,17 @@ int main(void) {
     printf("\n");
     printf("\n");
 
+
     // -------------------------------------------------------------------------
     // test d'egalité
     printf("Test si deux listes sont egales\n");
 
     Liste* maList2 = initialiser();
-    insererEnQueue(maList2, &info);
     insererEnQueue(maList2, &info2);
     insererEnQueue(maList2, &info3);
     insererEnQueue(maList2, &info4);
     insererEnQueue(maList2, &info5);
     insererEnQueue(maList2, &info6);
-
     printf("Liste 1 et 2\n");
     afficher(maList,FORWARD);
     printf("\n");
@@ -170,7 +169,7 @@ int main(void) {
 	insererEnQueue(maList2, &info);
 	insererEnQueue(maList2, &info2);
 	insererEnQueue(maList2, &info3);
-	insererEnQueue(maList2, &info4);//la
+	insererEnQueue(maList2, &info4);
 	insererEnQueue(maList2, &info5);
 	insererEnQueue(maList2, &info6);
 	vider(maList2, 3);
@@ -192,6 +191,27 @@ int main(void) {
 	vider(maList2, 0);
 	afficher(maList2,FORWARD);
 	afficher(maList2,BACKWARD);
+
+	Element* ptr = maList->tete;
+	while(ptr){
+	    Element* suivant = ptr->suivant;
+	    free(ptr);
+	    ptr = suivant;
+	}
+
+    ptr = maList2->tete;
+    while(ptr){
+        Element* suivant = ptr->suivant;
+        free(ptr);
+        ptr = suivant;
+    }
+
+    vider(maList, 3);
+    vider(maList, 0);
+
+	free(maList);
+	free(maList2);
+
     return EXIT_SUCCESS;
 }
 
