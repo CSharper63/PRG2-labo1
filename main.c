@@ -21,6 +21,12 @@
 
 #include "listes_dynamiques.h"
 
+/* MEMTEST sert à simuler une mauvaise allocation et un retour de
+   pointeur a NULL pour la fonction insererEnQueue
+   (il faut aussi l'activer dans listes_dynamiques.c)
+ */
+#define MEMTEST
+
 /***
  * Teste si l'élément à une position x est pair.
  * @param position position de l'élément dans la chaîne.
@@ -58,7 +64,7 @@ int main(void) {
 
    // -------------------------------------------------------------------------
    // Test suppression d'éléments dans une liste vide
-   int valSuppr;
+   int valSuppr = 0;
    printf(" \nTest suppression element en queue dans une liste vide\n");
    if (supprimerEnQueue(maList, &valSuppr) == LISTE_VIDE) {
       printf("Renvoi \"LISTE_VIDE\" OK ! \n");
@@ -83,53 +89,53 @@ int main(void) {
 
    afficher(maList, FORWARD);
 
-   printf("\nAffichage apres supression 4 en queue\n");
+   printf("\nAffichage apres suppression de %d en queue\n", info4);
    if (supprimerEnQueue(maList, &valSuppr) == OK) {
       printf("Retour OK\n");
    }
 
    afficher(maList, FORWARD);
 
-   // A été testé en mettant à la main le retour de malloc à NULL
-   /*if(insererEnQueue(maList, &info4) == MEMOIRE_INSUFFISANTE) {
-      printf("MEM INSUF OK");
-   }*/
+#ifdef MEMTEST
+   if(insererEnQueue(maList, &info4) == MEMOIRE_INSUFFISANTE) {
+      printf("\n## TEST MEMOIRE INSUFFISANTE : OK ##\n");
+   }
+#endif
 
-   printf("\nAffichage apres ajout 4 en queue\n");
+   printf("\nAffichage apres ajout %d en queue\n", info4);
    insererEnQueue(maList, &info4);
    afficher(maList, FORWARD);
 
-   printf("\nAffichage apres supression 4 en tete\n");
+   printf("\nAffichage apres supression de l'élément en tete\n");
    supprimerEnTete(maList, &valSuppr);
    afficher(maList, FORWARD);
 
    insererEnTete(maList, &info4);
-   printf("\nAffichage apres ajout 4 en tete\n");
+   printf("\nAffichage apres ajout %d en tete\n", info4);
    afficher(maList, FORWARD);
 
-   printf("\nAffichage apres ajout 3 en tete\n");
+   printf("\nAffichage apres ajout de %d en tete\n", info3);
    insererEnTete(maList, &info3);
    afficher(maList, FORWARD);
 
-   printf("\nAffichage apres ajout 5 en queue\n");
+   printf("\nAffichage apres ajout de %d en queue\n", info5);
    insererEnQueue(maList, &info5);
    afficher(maList, FORWARD);
 
-   printf("\nInsertion en queue de 6 \n");
+   printf("\nInsertion en queue de %d \n", info6);
    insererEnQueue(maList, &info6);
    afficher(maList, FORWARD);
 
-   printf("\nInsertion en tete de 2 \n");
+   printf("\nInsertion en tete de %d \n", info2);
    insererEnTete(maList, &info2);
    afficher(maList, FORWARD);
 
-   printf("\nInsertion en tete de 1\n");
+   printf("\nInsertion en tete de %d\n", info);
    insererEnTete(maList, &info);
    afficher(maList, FORWARD);
 
    printf("\n");
    printf("\n");
-
 
    // -------------------------------------------------------------------------
    // test d'egalité
@@ -147,10 +153,10 @@ int main(void) {
    afficher(maList2, FORWARD);
 
    printf("\nSont egales: %d\n", sontEgales(maList, maList2));
-   printf("Retest d'egalite apres insertion d'un elmt dans liste2:");
+   printf("Retest d'egalite apres insertion d'un element dans liste2:");
    insererEnQueue(maList2, &info);
    printf("\nSont egales: %d\n", sontEgales(maList, maList2));
-   printf("Retest d'egalite apres suppression du nouvel elmt dans liste2:");
+   printf("Retest d'egalite apres suppression du nouvel element dans liste2:");
    supprimerEnQueue(maList2, &info);
    printf("\nSont egales: %d\n", sontEgales(maList, maList2));
 
@@ -158,7 +164,7 @@ int main(void) {
    // -------------------------------------------------------------------------
    // Test de suppression selon critère
 
-   printf("\nTest de supression selon critere:\n");
+   printf("\nTest de suppression selon critere:\n");
    printf("Liste originale: \n");
    afficher(maList, FORWARD);
    supprimerSelonCritere(maList, &isPair);
@@ -187,7 +193,7 @@ int main(void) {
    vider(maList2, 10);
    afficher(maList2, FORWARD);
    afficher(maList2, BACKWARD);
-   printf("\nTest vider liste a partir de 3(taille =4):\n");
+   printf("\nTest vidage liste a partir de 3(taille =4):\n");
    vider(maList2, 3);
    afficher(maList2, FORWARD);
    afficher(maList2, BACKWARD);

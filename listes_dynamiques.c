@@ -18,6 +18,12 @@
 #include <assert.h>
 #include <stdio.h>
 
+/* MEMTEST sert à simuler une mauvaise allocation
+   et un retour de pointeur a NULL pour la fonction insererEnQueue.
+   (Il faut aussi définir MEMETEST dans main.c)
+*/
+//#define MEMTEST
+
 /**
  * Initialise une liste avec les pointeurs tete et queue à NULL.
  * @return la liste initialisée.
@@ -122,6 +128,11 @@ Status insererEnQueue(Liste *liste, const Info *info) {
 
    assert(info != NULL);
    Element *nouveau = (Element *) malloc(sizeof(Element));
+
+#ifdef MEMTEST
+   nouveau = NULL;
+#endif
+
    if (nouveau == NULL) {
       return MEMOIRE_INSUFFISANTE;
    } else {
