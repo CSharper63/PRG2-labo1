@@ -17,18 +17,26 @@
 
 #include "listes_dynamiques.h"
 
+// fonction de test pour la suppression selon critère
 bool isPair(size_t position, const Info *info){
+    return !(*info % 2);
+    /* ancien code
     if(*info % 2 == 0){
         return true;
     }
     return false;
+     */
 }
 
+// fonction de test pour la suppression selon critère
 bool isImpair(size_t position, const Info *info){
+    return (*info % 2);
+    /* ancien code
     if(*info % 2){
         return true;
     }
     return false;
+     */
 }
 
 int main(void) {
