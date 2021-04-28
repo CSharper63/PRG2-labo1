@@ -5,7 +5,7 @@
  Date creation  : 22.04.2021
 
  Description    : Librairie permettant la gestion de listes doublement chaînées
-                  non circulaires
+                  non circulaires.
 
  Remarque(s)    : -
 
@@ -23,12 +23,12 @@
  * @return la liste initialisée.
  */
 Liste *initialiser() {
-	Liste *liste = malloc(sizeof(Liste));
-	assert(liste != NULL);
+   Liste *liste = malloc(sizeof(Liste));
+   assert(liste != NULL);
 
-	liste->tete = NULL;
-	liste->queue = NULL;
-	return liste;
+   liste->tete = NULL;
+   liste->queue = NULL;
+   return liste;
 }
 
 /**
@@ -37,7 +37,7 @@ Liste *initialiser() {
  * @return true si la liste est vide et false sinon.
  */
 bool estVide(const Liste *liste) {
-	return !liste->tete;
+   return !liste->tete;
 }
 
 /**
@@ -46,11 +46,11 @@ bool estVide(const Liste *liste) {
  * @return un compteur indiquant le nombre d'élément dans la liste.
  */
 size_t longueur(const Liste *liste) {
-	size_t cnt = 0;
-	for (Element *currentPtr = liste->tete; currentPtr != NULL; currentPtr = currentPtr->suivant) {
-		++cnt;
-	}
-	return cnt;
+   size_t cnt = 0;
+   for (Element *currentPtr = liste->tete; currentPtr != NULL; currentPtr = currentPtr->suivant) {
+      ++cnt;
+   }
+   return cnt;
 }
 
 /**
@@ -59,26 +59,26 @@ size_t longueur(const Liste *liste) {
  * @param mode mode d'affichage de la liste (forward/backward).
  */
 void afficher(const Liste *liste, Mode mode) {
-	printf("[");
-	if (!estVide(liste)) {
-		switch (mode) {
-            case FORWARD:
-                for (Element *currentPtr = liste->tete; currentPtr != NULL; currentPtr = currentPtr->suivant) {
-                    printf("%d", currentPtr->info);
-                    if(currentPtr->suivant)
-                        printf(",");
-                }
-                break;
-			case BACKWARD:
-				for (Element *currentPtr = liste->queue; currentPtr != NULL; currentPtr = currentPtr->precedent) {
-					printf("%d", currentPtr->info);
-					if(currentPtr->precedent)
-					    printf(",");
-				}
-				break;
-		}
-	}
-	printf("]");
+   printf("[");
+   if (!estVide(liste)) {
+      switch (mode) {
+         case FORWARD:
+            for (Element *currentPtr = liste->tete; currentPtr != NULL; currentPtr = currentPtr->suivant) {
+               printf("%d", currentPtr->info);
+               if (currentPtr->suivant)
+                  printf(",");
+            }
+            break;
+         case BACKWARD:
+            for (Element *currentPtr = liste->queue; currentPtr != NULL; currentPtr = currentPtr->precedent) {
+               printf("%d", currentPtr->info);
+               if (currentPtr->precedent)
+                  printf(",");
+            }
+            break;
+      }
+   }
+   printf("]");
 }
 
 /**
@@ -89,26 +89,26 @@ void afficher(const Liste *liste, Mode mode) {
  * s'il n'y a pas assez de mémoire pour créer le nouvel élément.
  */
 Status insererEnTete(Liste *liste, const Info *info) {
-	assert(info != NULL);
+   assert(info != NULL);
 
-	Element* nouveau = (Element*) malloc(sizeof(Element));
-	if(nouveau == NULL){
-        return MEMOIRE_INSUFFISANTE;
-	} else {
-        nouveau->info = *info;
-        if (!estVide(liste)) {
-            nouveau->suivant = liste->tete;
-            nouveau->precedent = NULL;
-            liste->tete->precedent = nouveau;
-            liste->tete = nouveau;
-        } else {
-            nouveau->suivant = NULL;
-            nouveau->precedent = NULL;
-            liste->queue = nouveau;
-            liste->tete = nouveau;
-        }
-	}
-	return OK;
+   Element *nouveau = (Element *) malloc(sizeof(Element));
+   if (nouveau == NULL) {
+      return MEMOIRE_INSUFFISANTE;
+   } else {
+      nouveau->info = *info;
+      if (!estVide(liste)) {
+         nouveau->suivant = liste->tete;
+         nouveau->precedent = NULL;
+         liste->tete->precedent = nouveau;
+         liste->tete = nouveau;
+      } else {
+         nouveau->suivant = NULL;
+         nouveau->precedent = NULL;
+         liste->queue = nouveau;
+         liste->tete = nouveau;
+      }
+   }
+   return OK;
 }
 
 /**
@@ -120,26 +120,26 @@ Status insererEnTete(Liste *liste, const Info *info) {
  */
 Status insererEnQueue(Liste *liste, const Info *info) {
 
-	assert(info != NULL);
-	Element* nouveau = (Element*) malloc(sizeof(Element));
-	if(nouveau == NULL){
-        return MEMOIRE_INSUFFISANTE;
-	}else {
-        nouveau->info = *info;
+   assert(info != NULL);
+   Element *nouveau = (Element *) malloc(sizeof(Element));
+   if (nouveau == NULL) {
+      return MEMOIRE_INSUFFISANTE;
+   } else {
+      nouveau->info = *info;
 
-        if (!estVide(liste)) {
-            nouveau->suivant = NULL;
-            nouveau->precedent = liste->queue;
-            liste->queue->suivant = nouveau;
-            liste->queue = nouveau;
-        } else {
-            nouveau->suivant = NULL;
-            nouveau->precedent = NULL;
-            liste->queue = nouveau;
-            liste->tete = nouveau;
-        }
-	}
-	return OK;
+      if (!estVide(liste)) {
+         nouveau->suivant = NULL;
+         nouveau->precedent = liste->queue;
+         liste->queue->suivant = nouveau;
+         liste->queue = nouveau;
+      } else {
+         nouveau->suivant = NULL;
+         nouveau->precedent = NULL;
+         liste->queue = nouveau;
+         liste->tete = nouveau;
+      }
+   }
+   return OK;
 }
 
 /**
@@ -150,22 +150,22 @@ Status insererEnQueue(Liste *liste, const Info *info) {
  * LISTE_VIDE si la liste était vide.
  */
 Status supprimerEnTete(Liste *liste, Info *info) {
-	assert(info != NULL);
-	if (estVide(liste)) {
-        return LISTE_VIDE;
-	} else {
-        *info = liste->tete->info;
-        if (liste->tete->suivant) {
-            liste->tete = liste->tete->suivant;
-            free(liste->tete->precedent);
-            liste->tete->precedent = NULL;
-        } else {
-            free(liste->tete);
-            liste->tete = NULL;
-            liste->queue = NULL;
-        }
-        return OK;
-	}
+   assert(info != NULL);
+   if (estVide(liste)) {
+      return LISTE_VIDE;
+   } else {
+      *info = liste->tete->info;
+      if (liste->tete->suivant) {
+         liste->tete = liste->tete->suivant;
+         free(liste->tete->precedent);
+         liste->tete->precedent = NULL;
+      } else {
+         free(liste->tete);
+         liste->tete = NULL;
+         liste->queue = NULL;
+      }
+      return OK;
+   }
 }
 
 /**
@@ -176,22 +176,22 @@ Status supprimerEnTete(Liste *liste, Info *info) {
  * LISTE_VIDE si la liste était vide.
  */
 Status supprimerEnQueue(Liste *liste, Info *info) {
-	assert(info != NULL);
-	if (estVide(liste)) {
-        return LISTE_VIDE;
-	} else {
-        *info = liste->queue->info;
-        if (liste->queue->precedent) {
-            liste->queue = liste->queue->precedent;
-            free(liste->queue->suivant);
-            liste->queue->suivant = NULL;
-        } else {
-            free(liste->tete);
-            liste->tete = NULL;
-            liste->queue = NULL;
-        }
-        return OK;
-	}
+   assert(info != NULL);
+   if (estVide(liste)) {
+      return LISTE_VIDE;
+   } else {
+      *info = liste->queue->info;
+      if (liste->queue->precedent) {
+         liste->queue = liste->queue->precedent;
+         free(liste->queue->suivant);
+         liste->queue->suivant = NULL;
+      } else {
+         free(liste->tete);
+         liste->tete = NULL;
+         liste->queue = NULL;
+      }
+      return OK;
+   }
 }
 
 /**
@@ -200,32 +200,32 @@ Status supprimerEnQueue(Liste *liste, Info *info) {
  * @param critere fonction prenant deux paramètres position et pointeur sur le contenu de d'un élément de la liste.
  */
 void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const Info *info)) {
-	if (estVide(liste))
-	    return;
-	size_t pos = 0;
-	//Variable "info" utilisée pour l'appel de supprimerEnTete et
-	// supprimeEnQueue
-	int info;
-	Element *pastPtr;
-	for (Element *currentPtr = liste->tete; currentPtr != NULL; ++pos) {
-		if (critere(pos, &currentPtr->info)) {
-			if (currentPtr == liste->tete) {
-				supprimerEnTete(liste, &info);
-				currentPtr = liste->tete;
-			} else if (currentPtr == liste->queue) {
-				supprimerEnQueue(liste, &info);
-				currentPtr = NULL;
-			} else { //Cas du milieu
-				pastPtr->suivant = currentPtr->suivant;
-				free(currentPtr);
-				currentPtr = pastPtr->suivant;
-				currentPtr->precedent = pastPtr;
-			}
-		} else {
-			pastPtr = currentPtr;
-			currentPtr = currentPtr->suivant;
-		}
-	}
+   if (estVide(liste))
+      return;
+   size_t pos = 0;
+   //Variable "info" utilisée pour l'appel de supprimerEnTete et
+   // supprimeEnQueue
+   int info;
+   Element *pastPtr;
+   for (Element *currentPtr = liste->tete; currentPtr != NULL; ++pos) {
+      if (critere(pos, &currentPtr->info)) {
+         if (currentPtr == liste->tete) {
+            supprimerEnTete(liste, &info);
+            currentPtr = liste->tete;
+         } else if (currentPtr == liste->queue) {
+            supprimerEnQueue(liste, &info);
+            currentPtr = NULL;
+         } else { //Cas du milieu
+            pastPtr->suivant = currentPtr->suivant;
+            free(currentPtr);
+            currentPtr = pastPtr->suivant;
+            currentPtr->precedent = pastPtr;
+         }
+      } else {
+         pastPtr = currentPtr;
+         currentPtr = currentPtr->suivant;
+      }
+   }
 }
 
 /**
@@ -234,33 +234,33 @@ void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const 
  * @param position index de l'élément dans la liste.
  */
 void vider(Liste *liste, size_t position) {
-	size_t taille = longueur(liste);
-	if (estVide(liste) || position >= taille)
-	    return;
+   size_t taille = longueur(liste);
+   if (estVide(liste) || position >= taille)
+      return;
 
-	if (taille == 1) {
-		free(liste->tete);
-		liste->tete = NULL;
-		liste->queue = NULL;
-	} else {
-			Element *currentPtr = liste->queue->precedent;
-		/* Parcours la boucle depuis la fin en supprimant les éléments jusqu'à
-		 * l'index position et réaffecte le pointeur sur la queue de liste.
-		 * */
-			for (size_t i = taille - 1; i >= position && i != 0; --i, currentPtr = currentPtr->precedent) {
-			free(currentPtr->suivant);
-			currentPtr->suivant = NULL;
-			liste->queue = currentPtr;
-		}
+   if (taille == 1) {
+      free(liste->tete);
+      liste->tete = NULL;
+      liste->queue = NULL;
+   } else {
+      Element *currentPtr = liste->queue->precedent;
+      /* Parcours la boucle depuis la fin en supprimant les éléments jusqu'à
+       * l'index position et réaffecte le pointeur sur la queue de liste.
+       * */
+      for (size_t i = taille - 1; i >= position && i != 0; --i, currentPtr = currentPtr->precedent) {
+         free(currentPtr->suivant);
+         currentPtr->suivant = NULL;
+         liste->queue = currentPtr;
+      }
 
-		if(!position){
-		    free(liste->tete);
-			currentPtr = NULL;
-			liste->queue = NULL;
-			liste->tete = NULL;
+      if (!position) {
+         free(liste->tete);
+         currentPtr = NULL;
+         liste->queue = NULL;
+         liste->tete = NULL;
 
-		}
-	}
+      }
+   }
 }
 
 /**
@@ -271,15 +271,15 @@ void vider(Liste *liste, size_t position) {
  */
 bool sontEgales(const Liste *liste1, const Liste *liste2) {
 
-	Element* currentPtrL1 = liste1->tete;
-	Element* currentPtrL2 = liste2->tete;
+   Element *currentPtrL1 = liste1->tete;
+   Element *currentPtrL2 = liste2->tete;
 
-	while(currentPtrL1 && currentPtrL2){
-		if(currentPtrL1->info != currentPtrL2->info)
-		    return false;
-		currentPtrL1 = currentPtrL1->suivant;
-		currentPtrL2 = currentPtrL2->suivant;
-	}
+   while (currentPtrL1 && currentPtrL2) {
+      if (currentPtrL1->info != currentPtrL2->info)
+         return false;
+      currentPtrL1 = currentPtrL1->suivant;
+      currentPtrL2 = currentPtrL2->suivant;
+   }
 
-	return !currentPtrL1 && !currentPtrL2;
+   return !currentPtrL1 && !currentPtrL2;
 }
