@@ -25,7 +25,7 @@
    pointeur a NULL pour la fonction insererEnQueue
    (il faut aussi l'activer dans listes_dynamiques.c)
  */
-#define MEMTEST
+//#define MEMTEST
 
 /***
  * Teste si l'élément à une position x est pair.
