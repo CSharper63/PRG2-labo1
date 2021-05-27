@@ -154,8 +154,10 @@ int main(void) {
 
    printf("\nSont egales: %d\n", sontEgales(maList, maList2));
    printf("Retest d'egalite apres insertion d'un element dans liste2:");
-   insererEnQueue(maList2, &info);
-   printf("\nSont egales: %d\n", sontEgales(maList, maList2));
+//   Mauvais test
+//   insererEnQueue(maList2, &info);
+    insererEnTete(maList2, &info);
+    printf("\nSont egales: %d\n", sontEgales(maList, maList2));
    printf("Retest d'egalite apres suppression du nouvel element dans liste2:");
    supprimerEnQueue(maList2, &info);
    printf("\nSont egales: %d\n", sontEgales(maList, maList2));
@@ -177,6 +179,8 @@ int main(void) {
    printf("\nApres suppression des elements impaires:\n");
    afficher(maList, FORWARD);
 
+   // Manquent des tests ou le critère utilise la position plutot que la valeur d'info.
+
    //----
    // Test de vider une liste
    printf("\nTest vider liste a partir de 3:\n");
@@ -193,6 +197,7 @@ int main(void) {
    vider(maList2, 10);
    afficher(maList2, FORWARD);
    afficher(maList2, BACKWARD);
+   // pas le test annoncé. Ici taille = 3
    printf("\nTest vidage liste a partir de 3(taille =4):\n");
    vider(maList2, 3);
    afficher(maList2, FORWARD);
@@ -205,6 +210,12 @@ int main(void) {
    vider(maList2, 0);
    afficher(maList2, FORWARD);
    afficher(maList2, BACKWARD);
+
+   // manquent des tests pour longueur et pour estVide
+
+   // de manière générale le fichier de test manque de commentaires et de structure.
+   // une fonction de test par fonction testée par exemple. Idéalement les tests
+   // devraient être le plus indépendants les uns de autres possible.
 
    free(maList);
    free(maList2);

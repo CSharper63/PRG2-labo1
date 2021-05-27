@@ -29,11 +29,13 @@
  * @return la liste initialisée.
  */
 Liste *initialiser() {
-   Liste *liste = malloc(sizeof(Liste));
-   assert(liste != NULL);
-
-   liste->tete = NULL;
-   liste->queue = NULL;
+    // il faut caster explicitement le void*
+   Liste *liste = (Liste*) malloc(sizeof(Liste));
+   // pas la manière standard d'avertir l'utilisateur. Il faut plutôt retourner NULL. assert(liste != NULL);
+   if(liste != NULL) {
+       liste->tete = NULL;
+       liste->queue = NULL;
+   }
    return liste;
 }
 
@@ -66,7 +68,7 @@ size_t longueur(const Liste *liste) {
  */
 void afficher(const Liste *liste, Mode mode) {
    printf("[");
-   if (!estVide(liste)) {
+ // INUTILE : if (!estVide(liste)) {
       switch (mode) {
          case FORWARD:
             for (Element *currentPtr = liste->tete; currentPtr != NULL; currentPtr = currentPtr->suivant) {
@@ -83,7 +85,7 @@ void afficher(const Liste *liste, Mode mode) {
             }
             break;
       }
-   }
+ //  }
    printf("]");
 }
 
@@ -100,20 +102,19 @@ Status insererEnTete(Liste *liste, const Info *info) {
    Element *nouveau = (Element *) malloc(sizeof(Element));
    if (nouveau == NULL) {
       return MEMOIRE_INSUFFISANTE;
-   } else {
+   } // else { // else est inutile et indente inutilement le code.
       nouveau->info = *info;
+      // ces deux lignes ne doivent pas être dupliquées dans if...else...
+      nouveau->suivant = liste->tete;
+      nouveau->precedent = NULL;
       if (!estVide(liste)) {
-         nouveau->suivant = liste->tete;
-         nouveau->precedent = NULL;
          liste->tete->precedent = nouveau;
-         liste->tete = nouveau;
       } else {
-         nouveau->suivant = NULL;
-         nouveau->precedent = NULL;
          liste->queue = nouveau;
-         liste->tete = nouveau;
       }
-   }
+      // cette ligne ne doit pas être dupliquées dans if...else...
+      liste->tete = nouveau;
+  // }
    return OK;
 }
 
@@ -138,17 +139,16 @@ Status insererEnQueue(Liste *liste, const Info *info) {
    } else {
       nouveau->info = *info;
 
+       // ces deux lignes ne doivent pas être dupliquées dans if...else...
+      nouveau->suivant = NULL;
+      nouveau->precedent = liste->queue;
       if (!estVide(liste)) {
-         nouveau->suivant = NULL;
-         nouveau->precedent = liste->queue;
          liste->queue->suivant = nouveau;
-         liste->queue = nouveau;
       } else {
-         nouveau->suivant = NULL;
-         nouveau->precedent = NULL;
-         liste->queue = nouveau;
          liste->tete = nouveau;
       }
+      // cette ligne ne doit pas être dupliquées dans if...else...
+      liste->queue = nouveau;
    }
    return OK;
 }
@@ -164,19 +164,19 @@ Status supprimerEnTete(Liste *liste, Info *info) {
    assert(info != NULL);
    if (estVide(liste)) {
       return LISTE_VIDE;
-   } else {
-      *info = liste->tete->info;
-      if (liste->tete->suivant) {
-         liste->tete = liste->tete->suivant;
-         free(liste->tete->precedent);
+   } // else { // inutile
+       // le code suivant ne semble plus compact / moins dupliqué
+      Element* aSupprimer = liste->tete;
+      *info = aSupprimer->info;
+      liste->tete = aSupprimer->suivant;
+      free(aSupprimer);
+      if(liste->tete) {
          liste->tete->precedent = NULL;
       } else {
-         free(liste->tete);
-         liste->tete = NULL;
          liste->queue = NULL;
       }
       return OK;
-   }
+   // }
 }
 
 /**
@@ -191,6 +191,7 @@ Status supprimerEnQueue(Liste *liste, Info *info) {
    if (estVide(liste)) {
       return LISTE_VIDE;
    } else {
+       // un peu trop de duplication. voir supprimerEnTete
       *info = liste->queue->info;
       if (liste->queue->precedent) {
          liste->queue = liste->queue->precedent;
@@ -217,25 +218,30 @@ void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const 
    //Variable "info" utilisée pour l'appel de supprimerEnTete et
    // supprimeEnQueue
    int info;
-   Element *pastPtr;
-   for (Element *currentPtr = liste->tete; currentPtr != NULL; ++pos) {
+   // Pas nécessaire d'utiliser pastPtr, puisqu'il vaut currentPtr->precedent
+   // le passage au suivant peut également être simplifié avec un pointeur suivant
+//   Element *pastPtr;
+   for (Element *currentPtr = liste->tete, *suivant; currentPtr != NULL; currentPtr = suivant, ++pos) {
+      suivant = currentPtr->suivant;
       if (critere(pos, &currentPtr->info)) {
          if (currentPtr == liste->tete) {
             supprimerEnTete(liste, &info);
-            currentPtr = liste->tete;
+        //    currentPtr = liste->tete;
          } else if (currentPtr == liste->queue) {
             supprimerEnQueue(liste, &info);
-            currentPtr = NULL;
+        //    currentPtr = NULL;
          } else { //Cas du milieu
-            pastPtr->suivant = currentPtr->suivant;
-            free(currentPtr);
-            currentPtr = pastPtr->suivant;
-            currentPtr->precedent = pastPtr;
+             // pastPtr->suivant = currentPtr->suivant;
+             currentPtr->precedent->suivant = suivant;
+             suivant->precedent = currentPtr->precedent;
+             free(currentPtr);
+        //    currentPtr = pastPtr->suivant;
+        //    currentPtr->precedent = pastPtr;
          }
-      } else {
-         pastPtr = currentPtr;
-         currentPtr = currentPtr->suivant;
-      }
+      } // else {
+      //   pastPtr = currentPtr;
+      //   currentPtr = currentPtr->suivant;
+//      }
    }
 }
 
@@ -245,6 +251,13 @@ void supprimerSelonCritere(Liste *liste, bool (*critere)(size_t position, const 
  * @param position index de l'élément dans la liste.
  */
 void vider(Liste *liste, size_t position) {
+    // Vous êtes sûrs du prototype de cette fonction ? Elle devrait retourner Status pour signaler une
+    // position incorrecte, non ?
+    //
+    // appeler longueur est sale. Cela double le temps d'execution puisqu'il faut parcourir deux fois la liste
+    // de manière générale l'approche choisie est un peu boiteuse. Il faudrait parcourir la liste jusqu'à position
+    // puis effacer à partir de la. Et traiter à part le cas position == 0
+
    size_t taille = longueur(liste);
    if (estVide(liste) || position >= taille)
       return;
@@ -260,13 +273,14 @@ void vider(Liste *liste, size_t position) {
        * */
       for (size_t i = taille - 1; i >= position && i != 0; --i, currentPtr = currentPtr->precedent) {
          free(currentPtr->suivant);
+         // les 2 lignes suivantes n'ont rien à faire dans la boucle
          currentPtr->suivant = NULL;
          liste->queue = currentPtr;
       }
 
       if (!position) {
          free(liste->tete);
-         currentPtr = NULL;
+// INUTILE         currentPtr = NULL;
          liste->queue = NULL;
          liste->tete = NULL;
 
